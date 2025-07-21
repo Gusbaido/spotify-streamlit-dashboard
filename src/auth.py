@@ -11,8 +11,8 @@ client_id = os.getenv("SPOTIFY_CLIENT_ID")
 client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
 redirect_uri = os.getenv("SPOTIFY_REDIRECT_URI")
 
-# Escopo necessário para acessar top músicas
-scope = "user-top-read"
+# Escopo necessário para acessar top músicas, álbuns salvos, episódios e artistas
+scope = "user-top-read user-library-read user-read-recently-played"
 
 def spotify_auth():
     """
@@ -23,8 +23,6 @@ def spotify_auth():
         client_secret=client_secret,
         redirect_uri=redirect_uri,
         scope=scope,
-        show_dialog=True  # Garante que a permissão seja solicitada sempre
+        show_dialog=True
     )
-    sp = Spotify(auth_manager=auth_manager)
-    return sp
-
+    return Spotify(auth_manager=auth_manager)

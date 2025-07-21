@@ -1,79 +1,108 @@
-import pandas as pd
-from collections import Counter
-from typing import List, Dict, Any
-from fetch import get_top_tracks 
-
-def get_top_albums_from_tracks(tracks: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def analyze_top_tracks(sp, limit=20, time_range='medium_term'):
     """
-    Extrai os álbuns mais frequentes entre as faixas fornecidas.
-
-    Args:
-        tracks: Lista de dicionários com dados das faixas.
-
-    Returns:
-        Lista de dicionários com os álbuns, artista e número de faixas por álbum.
+    Analisa as top tracks do usuário
     """
-    album_counter = Counter()
+    try:
+        # Busca top tracks
+        results = sp.current_user_top_tracks(limit=limit, time_range=time_range)
+        
+        tracks = []
+        artists_count = {}
+        albums_count = {}
+        
+        for item in results['items']:
+            # Dados da música
+            track_data = {
+                'name': item['name'],
+                'artist': ', '.join([artist['name'] for artist in item['artists']]),
+                'album': item['album']['name'],
+                'popularity': item['popularity'],
+                'artist_ids': [artist['id'] for artist in item['artists']],
+                'album_id': item['album']['id']
+            }
+            tracks.append(track_data)
+            
+            # Conta artistas
+            for artist in item['artists']:
+                artist_name = artist['name']
+                artists_count[artist_name] = artists_count.get(artist_name, 0) + 1
+            
+            # Conta álbuns
+            album_name = item['album']['name']
+            album_artist = item['artists'][0]['name']  # Primeiro artista
+            albums_count[(album_name, album_artist)] = albums_count.get((album_name, album_artist), 0) + 1
+        
+        # Formata dados dos artistas
+        artists = [{'name': name, 'count': count} for name, count in artists_count.items()]
+        
+        # Formata dados dos álbuns
+        albums = [{'album': album, 'artist': artist, 'count': count} 
+                 for (album, artist), count in albums_count.items()]
+        
+        return tracks, artists, albums
+        
+    except Exception as e:
+        raise Exception(f"Erro ao analisar tracks: {e}")
 
-    for track in tracks:
-        album = track.get("album", "Desconhecido")
-        artista = track.get("artista", "Desconhecido")
-        chave = (album, artista)
-        album_counter[chave] += 1
-
-    albuns_ordenados = sorted(album_counter.items(), key=lambda x: x[1], reverse=True)
-
-    resultado = []
-    for (album, artista), quantidade in albuns_ordenados:
-        resultado.append({
-            "album": album,
-            "artista": artista,
-            "quantidade_musicas": quantidade
-        })
-
-    return resultado
-
-def analisar_albuns(tracks: List[Dict[str, Any]]) -> pd.DataFrame:
+def get_top_albums_from_tracks(tracks):
     """
-    Analisa os álbuns mais frequentes nas top músicas do usuário.
-
-    Args:
-        tracks: Lista de dicionários contendo dados das músicas
-
-    Returns:
-        DataFrame com os álbuns mais ouvidos
+    Extrai álbuns mais frequentes das tracks
     """
-    print("Analisando álbuns mais ouvidos...")
+    try:
+        if not tracks:
+            return []
+            
+        album_count = {}
+        for track in tracks:
+            album_key = (track['album'], track['artist'].split(',')[0].strip())
+            album_count[album_key] = album_count.get(album_key, 0) + 1
+        
+        albums = []
+        for (album, artist), count in album_count.items():
+            albums.append({
+                'album': album,
+                'artista': artist,
+                'quantidade_musicas': count
+            })
+        
+        return sorted(albums, key=lambda x: x['quantidade_musicas'], reverse=True)
+        
+    except Exception as e:
+        raise Exception(f"Erro ao processar álbuns: {e}")
 
-    albuns = [track['album'] for track in tracks if 'album' in track]
-    contagem = Counter(albuns)
-
-    df_albuns = pd.DataFrame(contagem.items(), columns=["Álbum", "Quantidade"])
-    df_albuns = df_albuns.sort_values(by="Quantidade", ascending=False).reset_index(drop=True)
-
-    print("Análise concluída!")
-    return df_albuns
-
-def salvar_csv(df: pd.DataFrame, nome_arquivo: str = "albuns_mais_ouvidos.csv"):
+def get_album_covers_from_tracks(sp, tracks):
     """
-    Salva os dados analisados em um arquivo CSV.
-
-    Args:
-        df: DataFrame a ser salvo
-        nome_arquivo: Nome do arquivo CSV
+    Extrai URLs das capas dos álbuns a partir das tracks e dos dados da API
     """
-    df.to_csv(nome_arquivo, index=False)
-    print(f"Dados salvos em: {nome_arquivo}")
-
-if __name__ == "__main__":
-    from auth import spotify_auth
-
-    sp = spotify_auth()
-    top_tracks = get_top_tracks(sp, limit=50, time_range='medium_term')
-
-    if top_tracks:
-        df_resultado = analisar_albuns(top_tracks)
-        print(df_resultado)
-        salvar_csv(df_resultado)
-    else:
-        print("⚠️ Nenhuma faixa foi retornada para análise.")
+    try:
+        if not tracks:
+            return {}
+            
+        covers = {}
+        
+        # Extrai IDs únicos dos álbuns
+        album_ids = set()
+        for track in tracks:
+            if 'album_id' in track:
+                album_ids.add(track['album_id'])
+        
+        # Busca informações dos álbuns em lotes (máximo 20 por vez)
+        album_ids_list = list(album_ids)
+        
+        for i in range(0, len(album_ids_list), 20):  # API permite max 20 álbuns por vez
+            batch = album_ids_list[i:i+20]
+            try:
+                albums_info = sp.albums(batch)
+                for album in albums_info['albums']:
+                    if album and album['images']:
+                        # Pega a primeira imagem (geralmente a de melhor qualidade)
+                        cover_url = album['images'][0]['url']
+                        covers[album['name']] = cover_url
+            except Exception as e:
+                print(f"Erro ao buscar lote de álbuns: {e}")
+                continue  # Pula este lote se houver erro
+        
+        return covers
+        
+    except Exception as e:
+        raise Exception(f"Erro ao obter capas: {e}")

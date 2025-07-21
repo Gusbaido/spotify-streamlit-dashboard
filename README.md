@@ -1,69 +1,65 @@
-Spotify Dashboard Pessoal
-Este projeto é um dashboard interativo em Streamlit que utiliza a API do Spotify para analisar suas músicas e álbuns mais ouvidos. Ideal para quem quer apresentar habilidades em Python, APIs, análise de dados e visualização interativa no portfólio.
+# Spotify Dashboard Pessoal
 
-Funcionalidades
-Autenticação com OAuth (Spotipy)
+Este projeto é um dashboard interativo em **Streamlit** que utiliza a **API do Spotify** para analisar suas músicas, artistas, álbuns e gêneros mais ouvidos. Ideal para demonstrar habilidades em **Python**, **API REST**, **OAuth 2.0**, **análise de dados** e **visualizações interativas** com Plotly.
 
-Coleta das 50 músicas mais ouvidas do usuário
+## 📌 Funcionalidades
 
-Análise dos álbuns mais frequentes
+- 🔐 Autenticação com OAuth usando Spotipy  
+- 🎶 Coleta de até 50 músicas mais ouvidas (curto, médio e longo prazo)  
+- 📀 Análise dos álbuns mais recorrentes  
+- 🎤 Identificação dos artistas mais escutados  
+- 🧬 Gráfico de distribuição de gêneros musicais  
+- 📊 Visualização com gráficos interativos (Plotly)  
+- 🖼️ Exibição das capas dos álbuns  
+- 📋 Tabelas interativas com os principais dados musicais  
 
-Visualização com gráficos interativos (Plotly)
+## 🚀 Como Executar o Projeto
 
-Métricas como artistas mais presentes e tempo médio das músicas
+1. **Clone o repositório**
 
-Como Executar o Projeto
 
-1. Clone o Repositório
 git clone https://github.com/seu-usuario/spotify-dashboard.git
 cd spotify-dashboard
+Instale as dependências
 
-2. Instale as dependências
-Use pip para instalar as bibliotecas necessárias:
 pip install -r requirements.txt
 
-3. Configure as variáveis de ambiente
-Crie um arquivo .env na raiz do projeto com suas credenciais do Spotify:
+
+Configure o arquivo .env
+
+Crie um arquivo .env na raiz com suas credenciais do Spotify:
+env
 SPOTIPY_CLIENT_ID=sua_client_id
 SPOTIPY_CLIENT_SECRET=sua_client_secret
 SPOTIPY_REDIRECT_URI=http://127.0.0.1:8888/callback
-
-4. Rode o aplicativo
+Execute o Streamlit
 streamlit run main.py
 
 🧠 Estrutura do Projeto
 📁 src/
 │
-├── auth.py              # Realiza a autenticação OAuth com o Spotify
-├── fetch.py             # Faz a coleta de músicas mais ouvidas
-├── analysis.py          # Processa os dados para gerar insights e rankings
-├── main.py              # Dashboard principal com Streamlit
-├── .env                 # Suas credenciais (não subir ao GitHub!)
-└── requirements.txt     # Bibliotecas do projeto
+├── auth.py              # Autenticação OAuth com Spotipy
+├── analysis.py          # Funções de extração e análise de dados do Spotify
+├── visualizations.py    # Criação dos gráficos e exibição de imagens
+├── main.py              # Interface principal com Streamlit
+├── .env                 # Credenciais de acesso (não subir ao GitHub!)
+└── requirements.txt     # Bibliotecas utilizadas
 
 📊 Visão Geral do Dashboard
+🔹 Aba 1: Músicas Tabela com título, artista, álbum e popularidade
 
-🔹 Aba 1: Top Músicas
-Gráfico de barras com popularidade das músicas
+🔹 Aba 2: Álbuns Gráfico de barras dos álbuns mais presentes no top Capas dos álbuns renderizadas com Streamlit
 
-Tabela com rank, nome, artista, álbum e popularidade
+🔹 Aba 3: Artistas Gráfico horizontal dos 10 artistas mais ouvidos
 
-🔹 Aba 2: Top Álbuns
-Gráfico de barras mostrando álbuns com mais músicas no Top 50
+🔹 Aba 4: Gêneros Gráfico de pizza com os gêneros musicais predominantes
 
-Tabela detalhada com nome do álbum, artista e quantidade de faixas
-
-🔹 Aba 3: Análises
-Gráfico de pizza com os 5 artistas mais recorrentes
-
-Duração média das músicas exibida com métrica interativa
-
-Tecnologias Usadas
+🛠 Tecnologias Usadas
 Python 3.10+
 
 Streamlit
 
-Spotipy (API Spotify)
+Spotipy
 
 Plotly Express
 
@@ -71,34 +67,30 @@ Pandas
 
 dotenv
 
-Próximos Passos
-Você pode expandir o projeto com:
+🧩 Próximos Passos
+🔍 Filtros por período customizado
 
-Análise de gêneros musicais
+📈 Comparação entre intervalos (ex: gráfico de radar)
 
-Comparativo por tempo (gráfico de radar entre os períodos)
+🧠 Dashboard com histórico de escuta
 
-Histórico de escuta ao longo do tempo
+📤 Exportação de relatórios em CSV
 
-Download de relatórios em CSV
+☁️ Versão pública hospedada (Streamlit Cloud ou Hugging Face Spaces)
 
-Versão pública hospedada (Streamlit Cloud ou Hugging Face Spaces)
+💼 Objetivo
+Este projeto foi desenvolvido para fins de estudo, prática e apresentação de:
 
-Objetivo
-Este projeto foi desenvolvido para fins de portfólio e prática com:
+Integração com API 
 
-APIs e autenticação OAuth
+Autenticação OAuth segura
 
-Pipeline de análise de dados
+Pipeline de análise de dados musicais
 
-Gráficos interativos para storytelling
+Visualização de dados interativa
 
-Aplicações Web com Python
+Desenvolvimento de apps com Python e Streamlit
 
 👤 Autor
-Gustavo Baido
-• Analista de Dados | Desenvolvedor de Projetos em Python & Streamlit
-
-# spotify-streamlit-dashboard
-Análise interativa dos hábitos musicais usando a API do Spotify, Python, Spotipy, Streamlit e Plotly.
->>>>>>> 0feb2a20e35cb3e3875eb4d1ea9f0579dd059288
+Luis Gustavo Baido | Analista de Dados | Desenvolvedor Python & Streamlit 
+📬linkedin./luis-gustavo-santos-baido-a0aa47159 🌐 github.com/Gusbaido
